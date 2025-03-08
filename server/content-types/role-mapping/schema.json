@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "role_mappings",
+  "info": {
+    "singularName": "role-mapping",
+    "pluralName": "role-mappings",
+    "displayName": "Role Mapping"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "keycloakRole": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "strapiRole": {
+      "type": "integer",
+      "required": true
+    }
+  }
+}

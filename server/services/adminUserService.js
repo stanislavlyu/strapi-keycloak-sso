@@ -4,22 +4,21 @@ const axios = require('axios');
 
 /**
  * @module RoleService
- * @description Service for managing Keycloak-admin user creation and role assignments in Strapi.
+ * @description Handles Keycloak authentication and maps user roles in Strapi.
  */
 module.exports = ({ strapi }) => ({
   /**
-   * Finds an existing admin user by email or creates a new one.
-   * Assigns the correct Strapi role based on Keycloak role mappings.
+   * Finds or creates an admin user in Strapi and assigns the correct role.
    *
    * @async
    * @function findOrCreate
-   * @param {Object} userInfo - The user information from Keycloak.
-   * @param {string} userInfo.email - The user's email address.
-   * @param {string} [userInfo.preferred_username] - The preferred username from Keycloak.
-   * @param {string} [userInfo.given_name] - The user's first name from Keycloak.
-   * @param {string} [userInfo.family_name] - The user's last name from Keycloak.
-   * @param {string} userInfo.sub - The unique Keycloak user ID.
-   * @returns {Promise<Object>} The created or found Strapi admin user.
+   * @param {Object} userInfo - The user data from Keycloak.
+   * @param {string} userInfo.email - User's email.
+   * @param {string} [userInfo.preferred_username] - Preferred username.
+   * @param {string} [userInfo.given_name] - First name.
+   * @param {string} [userInfo.family_name] - Last name.
+   * @param {string} userInfo.sub - Unique Keycloak user ID.
+   * @returns {Promise<Object>} The created or updated Strapi admin user.
    */
   async findOrCreate(userInfo) {
     /** @type {string} */
@@ -43,50 +42,35 @@ module.exports = ({ strapi }) => ({
       .getMappings();
 
     /** @type {number} */
-    const DEFAULT_ROLE = 5;
+    const DEFAULT_ROLE_ID = strapi
+      .config
+      .get('plugin.strapi-keycloak-passport')
+      .roleConfigs
+      .defaultRole;
 
-    /** @type {number} */
-    let APPLIED_ROLES = []; // Default Strapi role if no mapping is found
+    /** @type {Set<number>} */
+    let appliedRoles = new Set();
 
     try {
       // 🔥 Fetch user roles from Keycloak
-      const config = strapi.config.get('plugin.strapi-keycloak-passport');
-      const tokenResponse = await axios.post(
-        `${config.KEYCLOAK_AUTH_URL}/auth/realms/DeveloperConsole/protocol/openid-connect/token`,
-        new URLSearchParams({
-          client_id: config.KEYCLOAK_CLIENT_ID,
-          client_secret: config.KEYCLOAK_CLIENT_SECRET,
-          grant_type: 'client_credentials',
-        }).toString(),
-        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-      );
+      const keycloakRoles = await fetchKeycloakUserRoles(keycloakUserId, strapi);
 
-      const accessToken = tokenResponse.data.access_token;
-      if (!accessToken) throw new Error('Failed to obtain Keycloak admin token');
-
-
-      const rolesResponse = await axios.get(
-        `${config.KEYCLOAK_AUTH_URL}/auth/admin/realms/DeveloperConsole/users/${keycloakUserId}/role-mappings/realm`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-
-      /** @type {string[]} */
-      const keycloakRoles = rolesResponse.data.map(role => role.name);
-
-      keycloakRoles.map(role => {
-        roleMappings.find(mapRole => {
-          if (mapRole.keycloakRole === role) {
-            APPLIED_ROLES.push(mapRole.strapiRole)
+      // 🔄 Map Keycloak roles to Strapi roles
+      keycloakRoles.forEach((role) => {
+        roleMappings.map(mappedRole => {
+          if (mappedRole.keycloakRole === role) {
+            appliedRoles.add(mappedRole.strapiRole);
           }
         })
-      })
-
+      });
     } catch (error) {
-      strapi.log.error('Failed to fetch user roles from Keycloak:', error);
+      strapi.log.error('❌ Failed to fetch user roles from Keycloak:', error.response?.data || error.message);
     }
 
-    const USER_ROLES = APPLIED_ROLES.length ? APPLIED_ROLES : [DEFAULT_ROLE]
+    /** @type {number[]} */
+    const userRoles = appliedRoles.size ? Array.from(appliedRoles) : [DEFAULT_ROLE_ID];
 
+    // ✅ Efficiently create or update user only when needed
     if (!adminUser) {
       adminUser = await strapi.query('admin::user').create({
         data: {
@@ -95,16 +79,16 @@ module.exports = ({ strapi }) => ({
           lastname,
           username,
           isActive: true,
-          roles: USER_ROLES,
+          roles: userRoles,
         },
       });
-    } else {
+    } else if (JSON.stringify(adminUser.roles) !== JSON.stringify(userRoles)) {
       await strapi.query('admin::user').update({
         where: { id: adminUser.id },
         data: {
           firstname,
           lastname,
-          roles: USER_ROLES
+          roles: userRoles,
         },
       });
     }
@@ -112,3 +96,33 @@ module.exports = ({ strapi }) => ({
     return adminUser;
   },
 });
+
+/**
+ * Fetches user roles from Keycloak.
+ *
+ * @async
+ * @function fetchKeycloakUserRoles
+ * @param {string} keycloakUserId - The Keycloak user ID.
+ * @param {Object} strapi - Strapi instance.
+ * @returns {Promise<string[]>} Array of Keycloak role names.
+ * @throws {Error} If request fails or user ID is invalid.
+ */
+async function fetchKeycloakUserRoles(keycloakUserId, strapi) {
+  if (!keycloakUserId) throw new Error('❌ Keycloak user ID is missing!');
+
+  const config = strapi.config.get('plugin.strapi-keycloak-passport');
+
+  // 🔑 Fetch Keycloak Admin Token from service
+  const accessToken = await strapi
+    .plugin('strapi-keycloak-passport')
+    .service('keycloakService')
+    .fetchAdminToken();
+
+  // 🔍 Fetch User Roles
+  const rolesResponse = await axios.get(
+    `${config.KEYCLOAK_AUTH_URL}/auth/admin/realms/${config.KEYCLOAK_REALM}/users/${keycloakUserId}/role-mappings/realm`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+
+  return rolesResponse.data.map(role => role.name);
+}

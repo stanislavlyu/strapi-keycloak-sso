@@ -1,68 +1,60 @@
 'use strict';
 
+const axios = require('axios');
+
+/**
+ * @module KeycloakAuthController
+ * @description Handles Keycloak authentication and role management.
+ * @namespace strapi.plugins['strapi-keycloak-passport'].controllers
+ */
 module.exports = {
-  async keycloakCallback(ctx) {
-    try {
-      const { code } = ctx.query;
-      if (!code) return ctx.badRequest('Missing authorization code');
-
-      const passport = require('passport');
-
-      passport.authenticate('oauth2', async (err, user) => {
-        if (err || !user) {
-          return ctx.unauthorized('Authentication failed');
-        }
-
-        // Map Keycloak user to Strapi admin
-        const adminUser = await strapi.plugin('strapi-keycloak-passport')
-          .service('adminUserService')
-          .findOrCreate(user);
-
-        // Generate Strapi JWT
-        const jwt = await strapi.admin.services.token.createJwtToken(adminUser);
-
-        return ctx.send({ jwt });
-      })(ctx);
-    } catch (error) {
-      strapi.log.error('Keycloak Login Failed:', error);
-      return ctx.unauthorized('Authentication failed');
-    }
-  },
+  /**
+   * Fetches all Keycloak roles and Strapi admin roles.
+   *
+   * @async
+   * @function getRoles
+   * @param {Object} ctx - Koa context.
+   * @returns {Promise<Object>} - Object containing Keycloak roles and Strapi roles.
+   * @throws {Error} If fetching roles fails.
+   */
   async getRoles(ctx) {
     try {
-      const axios = require('axios')
       const config = strapi.config.get('plugin.strapi-keycloak-passport');
 
-      // 1️⃣ Get Admin Token
-      const tokenResponse = await axios.post(
-        `${config.KEYCLOAK_AUTH_URL}/auth/realms/DeveloperConsole/protocol/openid-connect/token`,
-        new URLSearchParams({
-          client_id: config.KEYCLOAK_CLIENT_ID,
-          client_secret: config.KEYCLOAK_CLIENT_SECRET,
-          grant_type: 'client_credentials',
-        }).toString(),
-        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-      );
+      // 🔑 Get Admin Token
+      const accessToken = await strapi
+        .plugin('strapi-keycloak-passport')
+        .service('keycloakService')
+        .fetchAdminToken();
 
-      const accessToken = tokenResponse.data.access_token;
-      if (!accessToken) throw new Error('Failed to get Keycloak admin token');
-
-      // 2️⃣ Fetch Keycloak Roles using Admin Token
+      // 🔍 Fetch Keycloak Roles using Admin Token
       const rolesResponse = await axios.get(
-        `${config.KEYCLOAK_AUTH_URL}/auth/admin/realms/DeveloperConsole/roles`,
+        `${config.KEYCLOAK_AUTH_URL}/auth/admin/realms/${config.KEYCLOAK_REALM}/roles`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
 
-      const keycloakRoles = rolesResponse.data;
+      /** @type {Object[]} */
+      const keycloakRoles = rolesResponse.data.filter(role => !config.roleConfigs.excludedRoles.includes(role.name));
+
+      /** @type {Object[]} */
       const strapiRoles = await strapi.query('admin::role').findMany();
 
       return ctx.send({ keycloakRoles, strapiRoles });
     } catch (error) {
-      strapi.log.error('Failed to fetch Keycloak roles:', error.response?.data || error.message);
+      strapi.log.error('❌ Failed to fetch Keycloak roles: Have you tried giving the role "MANAGE-REALM" and "MANAGE-USERS"?');
       return ctx.badRequest('Failed to fetch Keycloak roles');
     }
   },
 
+  /**
+   * Retrieves Keycloak-to-Strapi role mappings.
+   *
+   * @async
+   * @function getRoleMappings
+   * @param {Object} ctx - Koa context.
+   * @returns {Promise<Object>} - Object mapping Keycloak roles to Strapi roles.
+   * @throws {Error} If retrieval fails.
+   */
   async getRoleMappings(ctx) {
     try {
       const mappings = await strapi
@@ -71,6 +63,7 @@ module.exports = {
         .getMappings();
 
       // Convert array of mappings into an object
+      /** @type {Object} */
       const formattedMappings = mappings.reduce((acc, mapping) => {
         acc[mapping.keycloakRole] = mapping.strapiRole;
         return acc;
@@ -78,18 +71,36 @@ module.exports = {
 
       return ctx.send(formattedMappings);
     } catch (error) {
-      strapi.log.error('Failed to retrieve role mappings:', error);
+      strapi.log.error('❌ Failed to retrieve role mappings:', error);
       return ctx.badRequest('Failed to retrieve role mappings');
     }
   },
+
+  /**
+   * Saves Keycloak-to-Strapi role mappings.
+   *
+   * @async
+   * @function saveRoleMappings
+   * @param {Object} ctx - Koa context.
+   * @param {Object} ctx.request - Request object.
+   * @param {Object} ctx.request.body - Request body containing role mappings.
+   * @param {Object<string, number>} ctx.request.body.mappings - Object mapping Keycloak roles to Strapi roles.
+   * @returns {Promise<Object>} - Confirmation message.
+   * @throws {Error} If saving fails.
+   */
   async saveRoleMappings(ctx) {
     try {
+      /** @type {Object<string, number>} */
       const { mappings } = ctx.request.body;
-      await strapi.plugin('strapi-keycloak-passport').service('roleMappingService').saveMappings(mappings);
+
+      await strapi.plugin('strapi-keycloak-passport')
+        .service('roleMappingService')
+        .saveMappings(mappings);
+
       return ctx.send({ message: 'Mappings saved' });
     } catch (error) {
-      strapi.log.error('Failed to save mappings:', error);
-      return ctx.badRequest('Failed to save mappings');
+      strapi.log.error('❌ Failed to save role mappings:', error);
+      return ctx.badRequest('Failed to save role mappings');
     }
   },
 };

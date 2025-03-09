@@ -1,23 +1,44 @@
 'use strict';
 
+/**
+ * @module StrapiKeycloakBootstrap
+ * @description Bootstraps the Strapi Keycloak Passport Plugin and overrides admin authentication routes.
+ * @async
+ * @function
+ * @param {Object} strapi - The Strapi instance.
+ */
 module.exports = async ({ strapi }) => {
   strapi.log.info('🚀 Strapi Keycloak Passport Plugin Bootstrapped');
 
-  // ✅ Use Middleware to Intercept `/admin/login` Before Strapi Handles It
+  // ✅ Apply Middleware to Intercept `/admin/login` Before Strapi Handles It
   overrideAdminRoutes(strapi);
 
   strapi.log.info('🔒 Passport Keycloak Strategy Initialized');
 };
 
+/**
+ * Overrides admin authentication routes to use Keycloak.
+ *
+ * @function overrideAdminRoutes
+ * @param {Object} strapi - The Strapi instance.
+ */
 function overrideAdminRoutes(strapi) {
   try {
     strapi.log.info('🛠 Applying Keycloak Authentication Middleware...');
 
     strapi.server.use(async (ctx, next) => {
-      if (ctx.request.path === '/admin/login' && ctx.request.method === 'POST') {
+      /** @type {string} */
+      const requestPath = ctx.request.path;
+      /** @type {string} */
+      const requestMethod = ctx.request.method;
+
+      if (requestPath === '/admin/login' && requestMethod === 'POST') {
         const authController = require('./controllers/authOverrideController');
         await authController.login(ctx);
-      } else if ((ctx.request.path === '/admin/auth/reset-password' || ctx.request.path === '/admin/auth/register-admin') && ctx.request.method === 'GET') {
+      } else if (
+        (requestPath === '/admin/auth/reset-password' || requestPath.includes('/admin/auth/register')) &&
+        requestMethod === 'GET'
+      ) {
         return ctx.redirect('/admin/login');
       } else {
         await next();

@@ -13,8 +13,6 @@
     "@strapi/helper-plugin": "^4.6.0",
     "@strapi/icons": "^1.6.3",
     "axios": "^1.8.2",
-    "passport": "^0.7.0",
-    "passport-oauth2": "^1.8.0",
     "prop-types": "^15.7.2"
   },
   "devDependencies": {

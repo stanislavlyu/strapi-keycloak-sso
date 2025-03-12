@@ -33,7 +33,7 @@ module.exports = ({ strapi }) => ({
     const keycloakUserId = userInfo.sub;
 
     /** @type {Object|null} */
-    let adminUser = await strapi.query('admin::user').findOne({ where: { email } });
+    let adminUser = await strapi.query('admin::user').findOne({ where: { email }, populate: ['roles'] });
 
     /** @type {Object<string, number>} */
     const roleMappings = await strapi

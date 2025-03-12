@@ -73,6 +73,9 @@ module.exports = {
       /** @type {string} */
       const jwt = await strapi.admin.services.token.createJwtToken(adminUser);
 
+      // ✅ Inject Admin User Data into `ctx.session.adminUser` for Future Requests
+      ctx.session.adminUser = adminUser;
+
       return ctx.send({
         data: {
           token: jwt,

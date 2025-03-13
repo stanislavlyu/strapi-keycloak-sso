@@ -105,15 +105,15 @@ It maps **Keycloak roles to Strapi admin roles**.
 
 ```mermaid
 sequenceDiagram
-    participant User
-    participant Strapi
-    participant Keycloak
-    User->>Strapi: Request login (email + password)
-    Strapi->>Keycloak: Authenticate via OAuth2
-    Keycloak->>Strapi: Return Access Token
-    Strapi->>Keycloak: Fetch User Info
-    Strapi->>Strapi: Find/Create Admin User
-    Strapi->>User: Return JWT Token
+  participant User
+  participant Strapi
+  participant Keycloak
+  User->>Strapi: Request login (email + password)
+  Strapi->>Keycloak: Authenticate via OAuth2
+  Keycloak->>Strapi: Return Access Token
+  Strapi->>Keycloak: Fetch User Info
+  Strapi->>Strapi: Find/Create Admin User
+  Strapi->>User: Return JWT Token
 ```
 
 ✅ **Admin logs in once** → session persists, no re-authentication needed on every request.  

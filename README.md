@@ -102,6 +102,7 @@ It maps **Keycloak roles to Strapi admin roles**.
 ---
 
 ## 🔄 Authentication Flow
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -114,6 +115,7 @@ sequenceDiagram
     Strapi->>Strapi: Find/Create Admin User
     Strapi->>User: Return JWT Token
 ```
+
 ✅ **Admin logs in once** → session persists, no re-authentication needed on every request.  
 
 ---

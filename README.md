@@ -88,6 +88,7 @@ It maps **Keycloak roles to Strapi admin roles**.
 3️⃣ **Save the mapping.**  
 
 🔄 **Example Mapping:**
+
 | Keycloak Role       | Strapi Role       |
 |---------------------|------------------|
 | `STRAPI_ADMIN`      | `Super Admin (1)` |

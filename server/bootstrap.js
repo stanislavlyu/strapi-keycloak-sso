@@ -44,7 +44,7 @@ module.exports = async ({ strapi }) => {
   await ensureDefaultRoleMapping(strapi);
 
   // ✅ Apply Middleware to Intercept `/admin/login` Before Strapi Handles It
-  overrideAdminRoutes(strapi);
+  // overrideAdminRoutes(strapi);
 
   strapi.log.info('🔒 Passport Keycloak Strategy Initialized');
 };

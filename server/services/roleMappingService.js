@@ -29,6 +29,7 @@ module.exports = ({ strapi }) => ({
    * @returns {Promise<RoleMapping[]>}
    */
   async getMappings() {
-    return await strapi.db.query('plugin::strapi-keycloak-passport.role-mapping').findMany();
+    const roleMappings = await strapi.entityService.findMany('plugin::strapi-keycloak-passport.role-mapping', {});
+    return roleMappings;
   },
 });

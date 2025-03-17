@@ -1,43 +1,46 @@
 {
   "name": "@sonatel/strapi-keycloak-passport",
-  "version": "0.0.0",
-  "description": "This is the description of the plugin.",
+  "version": "0.1.0",
+  "description": "Keycloak authentication provider for the Strapi administration panel.",
   "strapi": {
-    "name": "Strapi Keycloak Passport",
+    "name": "strapi-keycloak-passport",
     "description": "Keycloak authentication provider for administration panel",
     "kind": "plugin",
-    "displayName": "Strapi Keycloak Passport"
+    "displayName": "Keycloak Passport",
+    "required": true
   },
   "dependencies": {
-    "@strapi/design-system": "^1.6.3",
-    "@strapi/helper-plugin": "^4.6.0",
-    "@strapi/icons": "^1.6.3",
+    "@strapi/design-system": "^1.19.0",
+    "@strapi/helper-plugin": "^4.25.12",
+    "@strapi/icons": "^1.19.0",
     "axios": "^1.8.2",
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^5.3.4",
+    "react-router-dom": "^6.16.0",
     "styled-components": "^5.3.6"
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0",
-    "react-router-dom": "^5.3.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.16.0",
     "styled-components": "^5.3.6"
   },
   "author": {
-    "name": "LPIX-11<mohamed.johnson@orange-sonatel.com>"
+    "name": "LPIX-11",
+    "email": "mohamed.johnson@orange-sonatel.com"
   },
   "maintainers": [
     {
-      "name": "LPIX-11<mohamed.johnson@orange-sonatel.com>"
+      "name": "LPIX-11",
+      "email": "mohamed.johnson@orange-sonatel.com"
     }
   ],
   "engines": {
-    "node": ">=16.0.0 <=20.x.x",
-    "npm": ">=6.0.0"
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=7.0.0"
   },
   "license": "MIT"
 }

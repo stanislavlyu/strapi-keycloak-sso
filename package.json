@@ -1,20 +1,42 @@
 {
-  "name": "@sonatel/strapi-keycloak-passport",
   "version": "0.1.0",
-  "description": "Keycloak authentication provider for the Strapi administration panel.",
-  "strapi": {
-    "name": "strapi-keycloak-passport",
-    "description": "Keycloak authentication provider for administration panel",
-    "kind": "plugin",
-    "displayName": "Keycloak Passport",
-    "required": true
+  "keywords": [],
+  "type": "commonjs",
+  "exports": {
+    "./package.json": "./package.json",
+    "./strapi-admin": {
+      "source": "./admin/src/index.js",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "source": "./server/src/index.js",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "strapi-plugin build",
+    "watch": "strapi-plugin watch",
+    "watch:link": "strapi-plugin watch:link",
+    "verify": "strapi-plugin verify"
   },
   "dependencies": {
+    "@strapi/strapi": "^5.11.2",
+    "@strapi/sdk-plugin": "^5.3.2",
     "@strapi/design-system": "^1.19.0",
     "@strapi/helper-plugin": "^4.25.12",
-    "@strapi/icons": "^1.19.0",
-    "axios": "^1.8.2",
-    "prop-types": "^15.7.2"
+    "prettier": "^3.5.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.0",
+    "styled-components": "^6.1.16",
+    "axios": "^1.8.2"
   },
   "devDependencies": {
     "react": "^18.2.0",
@@ -23,24 +45,25 @@
     "styled-components": "^5.3.6"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-router-dom": "^6.16.0",
-    "styled-components": "^5.3.6"
+    "@strapi/strapi": "^5.11.2",
+    "@strapi/sdk-plugin": "^5.3.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.0",
+    "styled-components": "^6.1.16"
   },
-  "author": {
-    "name": "LPIX-11",
-    "email": "mohamed.johnson@orange-sonatel.com"
+  "strapi": {
+    "kind": "plugin",
+    "name": "strapi-keycloak-passport",
+    "displayName": "Keycloak Passport",
+    "description": "Keycloak authentication provider for administration panel"
   },
-  "maintainers": [
-    {
-      "name": "LPIX-11",
-      "email": "mohamed.johnson@orange-sonatel.com"
-    }
-  ],
   "engines": {
     "node": ">=18.0.0 <=20.x.x",
     "npm": ">=7.0.0"
   },
-  "license": "MIT"
+  "name": "@sonatel/strapi-keycloak-passport",
+  "description": "Keycloak authentication provider for the Strapi administration panel.",
+  "license": "MIT",
+  "author": "(LPIX-11) <mohamed.johnson@orange-sonatel.com>"
 }

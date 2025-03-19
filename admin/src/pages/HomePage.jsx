@@ -1,0 +1,212 @@
+/*
+ * HomePage Component
+ *
+ * @module HomePage
+ * @description UI for mapping Keycloak roles to Strapi roles in Strapi Admin panel.
+ */
+
+import React, { useReducer, useEffect } from 'react';
+import axios from 'axios';
+import {
+  Box,
+  Flex,
+  Typography,
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Select,
+  Option,
+  Loader,
+  Alert,
+} from '@strapi/design-system';
+import { Check } from '@strapi/icons';
+
+/**
+ * @typedef {Object} HomePageState
+ * @property {Object[]} keycloakRoles - Array of Keycloak roles.
+ * @property {Object[]} strapiRoles - Array of Strapi roles.
+ * @property {Object<string, number>} roleMappings - Mapping of Keycloak roles to Strapi role IDs.
+ * @property {boolean} loading - Indicates if data is being fetched.
+ * @property {string|null} error - Error message (if any).
+ * @property {boolean} success - Indicates if mappings were saved successfully.
+ */
+
+/**
+ * Initial state for the HomePage reducer.
+ * @type {HomePageState}
+ */
+const initialState = {
+  keycloakRoles: [],
+  strapiRoles: [],
+  roleMappings: {},
+  loading: true,
+  error: null,
+  success: false,
+};
+
+/**
+ * Reducer function to manage HomePage state.
+ *
+ * @param {HomePageState} state - Current state.
+ * @param {Object} action - Dispatched action.
+ * @returns {HomePageState} - Updated state.
+ */
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_DATA':
+      return { ...state, ...action.payload, loading: false };
+    case 'SET_ROLE_MAPPING':
+      return {
+        ...state,
+        roleMappings: { ...state.roleMappings, [action.keycloakRole]: action.strapiRole },
+      };
+    case 'SET_ERROR':
+      return { ...state, error: action.error, loading: false };
+    case 'SET_SUCCESS':
+      return { ...state, success: true };
+    case 'RESET_SUCCESS':
+      return { ...state, success: false };
+    default:
+      return state;
+  }
+};
+
+/**
+ * HomePage Component
+ *
+ * @returns {JSX.Element} Component for managing role mappings between Keycloak and Strapi.
+ */
+const HomePage = () => {
+  /** @type {HomePageState, React.Dispatch<{ type: string, payload?: any }>}} */
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    /**
+     * Fetches roles from Keycloak and Strapi, and retrieves saved mappings.
+     *
+     * @async
+     * @function fetchRoles
+     */
+    async function fetchRoles() {
+      try {
+        const [rolesResponse, mappingsResponse] = await Promise.all([
+          axios.get('/strapi-keycloak-passport/keycloak-roles'),
+          axios.get('/strapi-keycloak-passport/get-keycloak-role-mappings'),
+        ]);
+
+        dispatch({
+          type: 'SET_DATA',
+          payload: {
+            keycloakRoles: rolesResponse.data.keycloakRoles,
+            strapiRoles: rolesResponse.data.strapiRoles,
+            roleMappings: mappingsResponse.data,
+          },
+        });
+      } catch (err) {
+        dispatch({ type: 'SET_ERROR', error: 'Failed to fetch roles. Please check Keycloak settings.' });
+      }
+    }
+
+    fetchRoles();
+  }, []);
+
+  /**
+   * Updates the role mapping state when a role is selected.
+   *
+   * @param {string} keycloakRole - The Keycloak role name.
+   * @param {number} strapiRole - The selected Strapi role ID.
+   */
+  const handleRoleMappingChange = (keycloakRole, strapiRole) => {
+    dispatch({ type: 'SET_ROLE_MAPPING', keycloakRole, strapiRole });
+  };
+
+  /**
+   * Saves the current role mappings to Strapi.
+   *
+   * @async
+   * @function saveMappings
+   */
+  const saveMappings = async () => {
+    try {
+      await axios.post('/strapi-keycloak-passport/save-keycloak-role-mappings', { mappings: state.roleMappings });
+      dispatch({ type: 'SET_SUCCESS' });
+
+      setTimeout(() => dispatch({ type: 'RESET_SUCCESS' }), 3000);
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', error: 'Failed to save mappings. Try again.' });
+    }
+  };
+
+  if (state.loading) return <Loader>Loading roles...</Loader>;
+
+  return (
+    <Box padding={8} background="transparent" shadow="filterShadow" borderRadius="4px">
+      <Typography variant="alpha" as="h1">Passport Role Mapping</Typography>
+
+      <Box paddingTop={4} paddingBottom={4}>
+        <Typography textColor="neutral600" variant="epsilon">
+          Map Keycloak roles to Strapi admin roles.
+        </Typography>
+      </Box>
+
+      {state.error && (
+        <Box paddingBottom={4}>
+          <Alert title="Error" variant="danger" startIcon={<Check />}>
+            {state.error}
+          </Alert>
+        </Box>
+      )}
+
+      {state.success && (
+        <Box paddingBottom={4}>
+          <Alert title="Success" variant="success" startIcon={<Check />}>
+            Role mappings saved successfully!
+          </Alert>
+        </Box>
+      )}
+
+      <Box background="neutral0">
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Keycloak Role</Th>
+              <Th>Strapi Role</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {state.keycloakRoles.map((kcRole) => (
+              <Tr key={kcRole.id}>
+                <Td>{kcRole.name}</Td>
+                <Td>
+                  <Select
+                    placeholder="Select Strapi Role"
+                    onChange={(roleId) => handleRoleMappingChange(kcRole.name, roleId)}
+                    value={state.roleMappings[kcRole.name] || ''} // ✅ Ensure valid value
+                  >
+                    {state.strapiRoles.map((strapiRole) => (
+                      <Option key={strapiRole.id} value={strapiRole.id}>
+                        {strapiRole.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+
+        <Box padding={4} paddingRight={8}>
+          <Flex justifyContent="flex-end">
+            <Button onClick={saveMappings} variant="primary">Save Mappings</Button>
+          </Flex>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export { HomePage };

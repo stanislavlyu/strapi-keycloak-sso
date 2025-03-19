@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "uid": "plugin::strapi-keycloak-passport.role-mapping",
+  "info": {
+    "singularName": "role-mapping",
+    "pluralName": "role-mappings",
+    "displayName": "Role Mapping",
+    "description": "Maps Keycloak roles to Strapi roles."
+  },
+  "attributes": {
+    "keycloakRole": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "required": true,
+      "unique": true
+    },
+    "strapiRole": {
+      "type": "integer",
+      "required": true
+    }
+  }
+}

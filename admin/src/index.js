@@ -1,127 +1,42 @@
-// import { prefixPluginTranslations } from '@strapi/helper-plugin';
-// import pluginPkg from '../../package.json';
-// import pluginId from './pluginId';
-// import Initializer from './components/Initializer';
-// import PluginIcon from './components/PluginIcon';
-
-// const name = pluginPkg.strapi.name;
-
-// export default {
-//   register(app) {
-//     app.addMenuLink({
-//       to: `/plugins/${pluginId}`,
-//       icon: PluginIcon,
-//       intlLabel: {
-//         id: `${pluginId}.plugin.name`,
-//         defaultMessage: name,
-//       },
-//       Component: async () => {
-//         const component = await import(/* webpackChunkName: "[request]" */ './pages/App');
-
-//         return component;
-//       },
-//       permissions: [
-//         // Uncomment to set the permissions of the plugin here
-//         // {
-//         //   action: '', // the action name should be plugin::plugin-name.actionType
-//         //   subject: null,
-//         // },
-//       ],
-//     });
-//     app.registerPlugin({
-//       id: pluginId,
-//       initializer: Initializer,
-//       isReady: false,
-//       name,
-//     });
-//   },
-
-//   bootstrap(app) {},
-//   async registerTrads({ locales }) {
-//     const importedTrads = await Promise.all(
-//       locales.map((locale) => {
-//         return import(
-//           /* webpackChunkName: "translation-[request]" */ `./translations/${locale}.json`
-//         )
-//           .then(({ default: data }) => {
-//             return {
-//               data: prefixPluginTranslations(data, pluginId),
-//               locale,
-//             };
-//           })
-//           .catch(() => {
-//             return {
-//               data: {},
-//               locale,
-//             };
-//           });
-//       })
-//     );
-
-//     return Promise.resolve(importedTrads);
-//   },
-// };
-
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
-import pluginPkg from '../../package.json';
-import pluginId from './pluginId';
-import Initializer from './components/Initializer';
-import PluginIcon from './components/PluginIcon';
-
-const name = pluginPkg.strapi.name;
+import { PLUGIN_ID } from './pluginId';
+import { Initializer } from './components/Initializer';
+import { PluginIcon } from './components/PluginIcon';
 
 export default {
   register(app) {
     app.addMenuLink({
-      to: `/plugins/${pluginId}`,
+      to: `plugins/${PluginIcon}`,
       icon: PluginIcon,
       intlLabel: {
-        id: `${pluginId}.plugin.name`,
-        defaultMessage: name,
+        id: `${PLUGIN_ID}.plugin.name`,
+        defaultMessage: PLUGIN_ID,
       },
       Component: async () => {
-        const component = await import(/* webpackChunkName: "[request]" */ './pages/App');
-        return component;
+        const { App } = await import('./pages/App');
+
+        return App;
       },
-      permissions: [
-        {
-          action: 'plugin::strapi-keycloak-passport.access', // ✅ Restrict access based on Strapi permissions
-          subject: null,
-        },
-      ],
     });
 
     app.registerPlugin({
-      id: pluginId,
+      id: PLUGIN_ID,
       initializer: Initializer,
       isReady: false,
-      name,
+      name: PLUGIN_ID,
     });
   },
 
-  bootstrap(app) { },
-
   async registerTrads({ locales }) {
-    const importedTrads = await Promise.all(
-      locales.map((locale) => {
-        return import(
-          /* webpackChunkName: "translation-[request]" */ `./translations/${locale}.json`
-        )
-          .then(({ default: data }) => {
-            return {
-              data: prefixPluginTranslations(data, pluginId),
-              locale,
-            };
-          })
-          .catch(() => {
-            return {
-              data: {},
-              locale,
-            };
-          });
+    return Promise.all(
+      locales.map(async (locale) => {
+        try {
+          const { default: data } = await import(`./translations/${locale}.json`);
+
+          return { data, locale };
+        } catch {
+          return { data: {}, locale };
+        }
       })
     );
-
-    return Promise.resolve(importedTrads);
   },
 };

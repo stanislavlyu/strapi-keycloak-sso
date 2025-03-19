@@ -1,5 +1,5 @@
-import pluginId from '../pluginId';
+import { PLUGIN_ID } from '../pluginId';
 
-const getTrad = (id) => `${pluginId}.${id}`;
+const getTranslation = (id) => `${PLUGIN_ID}.${id}`;
 
-export default getTrad;
+export { getTranslation };

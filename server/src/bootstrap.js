@@ -68,7 +68,6 @@ function overrideAdminRoutes(strapi) {
       const requestMethod = ctx.request.method;
 
       if (requestPath === '/admin/login' && requestMethod === 'POST') {
-        // const authController = require('./controllers/authOverrideController');
         await authController.login(ctx);
       } else if (
         (

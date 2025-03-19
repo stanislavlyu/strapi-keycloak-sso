@@ -86,7 +86,8 @@ const adminUserService = ({ strapi }) => ({
       }
 
       if (JSON.stringify(adminUser.roles) !== JSON.stringify(userRoles)) {
-        await strapi.entityService.update('admin::user', adminUser.id, {
+        await strapi.documents('admin::user').update({
+          documentId: adminUser.documentId,
           data: {
             firstname,
             lastname,

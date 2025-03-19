@@ -21,19 +21,20 @@ const roleMappingService = ({ strapi }) => ({
   async saveMappings(mappings) {
     try {
       // ✅ Delete all existing mappings (Strapi v5 requires explicit filters)
-      await strapi.entityService.deleteMany('plugin::strapi-keycloak-passport.role-mapping', {
-        filters: {},
+      await strapi.db.query('plugin::strapi-keycloak-passport.role-mapping').deleteMany({
+        where: {
+          id: {
+            $notNull: true,
+          },
+        },
       });
 
       // ✅ Bulk insert new role mappings
-      const entries = Object.entries(mappings).map(([keycloakRole, strapiRole]) => ({
-        keycloakRole,
-        strapiRole,
-      }));
-
-      await strapi.entityService.createMany('plugin::strapi-keycloak-passport.role-mapping', {
-        data: entries,
-      });
+      for (const [keycloakRole, strapiRole] of Object.entries(mappings)) {
+        await strapi.entityService.create('plugin::strapi-keycloak-passport.role-mapping', {
+          data: { keycloakRole, strapiRole },
+        });
+      }
 
       strapi.log.info('✅ Role mappings saved successfully.');
     } catch (error) {

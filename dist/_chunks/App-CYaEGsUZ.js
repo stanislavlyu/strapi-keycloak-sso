@@ -2,11 +2,11 @@
 Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 const jsxRuntime = require("react/jsx-runtime");
 const admin = require("@strapi/strapi/admin");
+const designSystem = require("@strapi/design-system");
 const reactRouterDom = require("react-router-dom");
 const react = require("react");
 const axios = require("axios");
-const designSystem = require("@strapi/design-system");
-const index = require("./index-D9lk6TCu.js");
+const index = require("./index-B6T1g4nz.js");
 const _interopDefault = (e) => e && e.__esModule ? e : { default: e };
 const axios__default = /* @__PURE__ */ _interopDefault(axios);
 const initialState = {
@@ -38,6 +38,8 @@ const reducer = (state, action) => {
 };
 const HomePage = () => {
   const [state, dispatch] = react.useReducer(reducer, initialState);
+  const [isSaving, setIsSaving] = react.useState(false);
+  designSystem.useNotifyAT();
   react.useEffect(() => {
     async function fetchRoles() {
       try {
@@ -63,47 +65,67 @@ const HomePage = () => {
     dispatch({ type: "SET_ROLE_MAPPING", keycloakRole, strapiRole });
   };
   const saveMappings = async () => {
+    setIsSaving(true);
     try {
       await axios__default.default.post("/strapi-keycloak-passport/save-keycloak-role-mappings", { mappings: state.roleMappings });
       dispatch({ type: "SET_SUCCESS" });
       setTimeout(() => dispatch({ type: "RESET_SUCCESS" }), 3e3);
     } catch (error) {
       dispatch({ type: "SET_ERROR", error: "Failed to save mappings. Try again." });
+    } finally {
+      setIsSaving(false);
     }
   };
   if (state.loading) return /* @__PURE__ */ jsxRuntime.jsx(designSystem.Loader, { children: "Loading roles..." });
   return /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Box, { padding: 8, background: "transparent", shadow: "filterShadow", borderRadius: "4px", children: [
     /* @__PURE__ */ jsxRuntime.jsx(designSystem.Typography, { variant: "alpha", as: "h1", children: "Passport Role Mapping" }),
     /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingTop: 4, paddingBottom: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Typography, { textColor: "neutral600", variant: "epsilon", children: "Map Keycloak roles to Strapi admin roles." }) }),
-    state.error && /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingBottom: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Alert, { title: "Error", variant: "danger", startIcon: /* @__PURE__ */ jsxRuntime.jsx(index.ForwardRef$4F, {}), children: state.error }) }),
+    state.error && /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingBottom: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Alert, { title: "Error", variant: "danger", startIcon: /* @__PURE__ */ jsxRuntime.jsx(index.ForwardRef$4b, {}), children: state.error }) }),
     state.success && /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingBottom: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Alert, { title: "Success", variant: "success", startIcon: /* @__PURE__ */ jsxRuntime.jsx(index.ForwardRef$4F, {}), children: "Role mappings saved successfully!" }) }),
-    /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Box, { background: "neutral0", children: [
-      /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Table, { children: [
+    /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Box, { background: "transparent", children: [
+      /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Table, { background: "pink", colCount: 2, rowCount: state.keycloakRoles.length + 1, children: [
         /* @__PURE__ */ jsxRuntime.jsx(designSystem.Thead, { children: /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Tr, { children: [
           /* @__PURE__ */ jsxRuntime.jsx(designSystem.Th, { children: "Keycloak Role" }),
           /* @__PURE__ */ jsxRuntime.jsx(designSystem.Th, { children: "Strapi Role" })
         ] }) }),
         /* @__PURE__ */ jsxRuntime.jsx(designSystem.Tbody, { children: state.keycloakRoles.map((kcRole) => /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Tr, { children: [
-          /* @__PURE__ */ jsxRuntime.jsx(designSystem.Td, { children: kcRole.name }),
+          /* @__PURE__ */ jsxRuntime.jsx(designSystem.Td, { children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Typography, { textColor: "neutral800", children: kcRole.name }) }),
           /* @__PURE__ */ jsxRuntime.jsx(designSystem.Td, { children: /* @__PURE__ */ jsxRuntime.jsx(
-            designSystem.Select,
+            designSystem.SingleSelect,
             {
-              placeholder: "Select Strapi Role",
+              label: "Select Strapi Role",
+              placeholder: "Assign role",
+              value: String(state.roleMappings[kcRole.name] || ""),
               onChange: (roleId) => handleRoleMappingChange(kcRole.name, roleId),
-              value: state.roleMappings[kcRole.name] || "",
-              children: state.strapiRoles.map((strapiRole) => /* @__PURE__ */ jsxRuntime.jsx(designSystem.Option, { value: strapiRole.id, children: strapiRole.name }, strapiRole.id))
+              children: state.strapiRoles.map((strapiRole) => /* @__PURE__ */ jsxRuntime.jsx(
+                designSystem.SingleSelectOption,
+                {
+                  value: String(strapiRole.id),
+                  children: strapiRole.name
+                },
+                strapiRole.id
+              ))
             }
           ) })
         ] }, kcRole.id)) })
       ] }),
-      /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { padding: 4, paddingRight: 8, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Flex, { justifyContent: "flex-end", children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Button, { onClick: saveMappings, variant: "primary", children: "Save Mappings" }) }) })
+      /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { padding: 4, paddingRight: 8, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Flex, { justifyContent: "flex-end", children: /* @__PURE__ */ jsxRuntime.jsx(
+        designSystem.Button,
+        {
+          onClick: saveMappings,
+          variant: "default",
+          loading: isSaving,
+          disabled: isSaving,
+          children: isSaving ? "Saving..." : "Save Mappings"
+        }
+      ) }) })
     ] })
   ] });
 };
 const App = () => {
-  return /* @__PURE__ */ jsxRuntime.jsxs(reactRouterDom.Routes, { children: [
+  return /* @__PURE__ */ jsxRuntime.jsx(designSystem.DesignSystemProvider, { children: /* @__PURE__ */ jsxRuntime.jsxs(reactRouterDom.Routes, { children: [
     /* @__PURE__ */ jsxRuntime.jsx(reactRouterDom.Route, { index: true, element: /* @__PURE__ */ jsxRuntime.jsx(HomePage, {}) }),
     /* @__PURE__ */ jsxRuntime.jsx(reactRouterDom.Route, { path: "*", element: /* @__PURE__ */ jsxRuntime.jsx(admin.Page.Error, {}) })
-  ] });
+  ] }) });
 };
 exports.App = App;

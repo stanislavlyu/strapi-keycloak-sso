@@ -16,14 +16,17 @@ const checkAdminPermission = (requiredPermission) => async (ctx, next) => {
     }
 
     /** @type {number[]} */
-    const roleIds = adminUser.roles.map(role => role.id);
+    const [roleId] = adminUser.roles.map(role => role.id);
 
     // ✅ Fetch permissions via Strapi Admin Services (Strapi v5)
-    const permissions = await strapi.admin.services.permission.findMany({
-      where: { action: requiredPermission, role: { id: { $in: roleIds } } },
+    const adminPermissions = await strapi.admin.services.permission.findMany({
+      where: {
+        role: roleId,
+        action: requiredPermission
+      }
     });
 
-    if (permissions.length === 0) {
+    if (adminPermissions.length === 0) {
       return ctx.forbidden(`Access denied. Missing permission: ${requiredPermission}`);
     }
 

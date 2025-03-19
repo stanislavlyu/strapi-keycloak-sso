@@ -12,8 +12,7 @@
       "type": "string",
       "minLength": 3,
       "maxLength": 100,
-      "required": true,
-      "unique": true
+      "required": true
     },
     "strapiRole": {
       "type": "integer",

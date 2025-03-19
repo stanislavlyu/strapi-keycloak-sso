@@ -1,3 +1,5 @@
+import checkAdminPermission from '../middlewares/checkAdminPermission';
+
 /**
  * Strapi Keycloak Passport Plugin Routes (Strapi v5)
  *
@@ -21,9 +23,8 @@ const routes = [
     handler: 'authController.getRoles',
     config: {
       auth: false,
-      // auth: { strategy: 'admin' }, // ✅ Required for accessing admin APIs
       policies: [],
-      middlewares: ['plugin::strapi-keycloak-passport.checkAdminPermission'],
+      middlewares: [checkAdminPermission('plugin::strapi-keycloak-passport.access')],
     },
   },
 
@@ -35,7 +36,7 @@ const routes = [
     config: {
       auth: false, // ✅ Required for admin data access
       policies: [],
-      middlewares: ['plugin::strapi-keycloak-passport.checkAdminPermission'],
+      middlewares: [checkAdminPermission('plugin::strapi-keycloak-passport.view-role-mappings')],
     },
   },
 
@@ -47,7 +48,7 @@ const routes = [
     config: {
       auth: false, // ✅ Ensures only admins can perform this action
       policies: [],
-      middlewares: ['plugin::strapi-keycloak-passport.checkAdminPermission'],
+      middlewares: [checkAdminPermission('plugin::strapi-keycloak-passport.manage-role-mappings')],
     },
   },
 ];

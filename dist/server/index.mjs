@@ -207,8 +207,7 @@ const attributes = {
     type: "string",
     minLength: 3,
     maxLength: 100,
-    required: true,
-    unique: true
+    required: true
   },
   strapiRole: {
     type: "integer",
@@ -313,11 +312,14 @@ const checkAdminPermission = (requiredPermission) => async (ctx, next) => {
     if (!adminUser) {
       return ctx.unauthorized("User is not authenticated.");
     }
-    const roleIds = adminUser.roles.map((role) => role.id);
-    const permissions = await strapi.admin.services.permission.findMany({
-      where: { action: requiredPermission, role: { id: { $in: roleIds } } }
+    const [roleId] = adminUser.roles.map((role) => role.id);
+    const adminPermissions = await strapi.admin.services.permission.findMany({
+      where: {
+        role: roleId,
+        action: requiredPermission
+      }
     });
-    if (permissions.length === 0) {
+    if (adminPermissions.length === 0) {
       return ctx.forbidden(`Access denied. Missing permission: ${requiredPermission}`);
     }
     await next();
@@ -348,9 +350,8 @@ const routes = [
     handler: "authController.getRoles",
     config: {
       auth: false,
-      // auth: { strategy: 'admin' }, // ✅ Required for accessing admin APIs
       policies: [],
-      middlewares: ["plugin::strapi-keycloak-passport.checkAdminPermission"]
+      middlewares: [checkAdminPermission("plugin::strapi-keycloak-passport.access")]
     }
   },
   // ✅ Get Role Mappings (Admin Permission Required)
@@ -362,7 +363,7 @@ const routes = [
       auth: false,
       // ✅ Required for admin data access
       policies: [],
-      middlewares: ["plugin::strapi-keycloak-passport.checkAdminPermission"]
+      middlewares: [checkAdminPermission("plugin::strapi-keycloak-passport.view-role-mappings")]
     }
   },
   // ✅ Save Role Mappings (Requires Manage Permission)
@@ -374,7 +375,7 @@ const routes = [
       auth: false,
       // ✅ Ensures only admins can perform this action
       policies: [],
-      middlewares: ["plugin::strapi-keycloak-passport.checkAdminPermission"]
+      middlewares: [checkAdminPermission("plugin::strapi-keycloak-passport.manage-role-mappings")]
     }
   }
 ];
@@ -430,7 +431,8 @@ const adminUserService = ({ strapi: strapi2 }) => ({
         });
       }
       if (JSON.stringify(adminUser.roles) !== JSON.stringify(userRoles)) {
-        await strapi2.entityService.update("admin::user", adminUser.id, {
+        await strapi2.documents("admin::user").update({
+          documentId: adminUser.documentId,
           data: {
             firstname,
             lastname,
@@ -471,16 +473,18 @@ const roleMappingService = ({ strapi: strapi2 }) => ({
    */
   async saveMappings(mappings) {
     try {
-      await strapi2.entityService.deleteMany("plugin::strapi-keycloak-passport.role-mapping", {
-        filters: {}
+      await strapi2.db.query("plugin::strapi-keycloak-passport.role-mapping").deleteMany({
+        where: {
+          id: {
+            $notNull: true
+          }
+        }
       });
-      const entries = Object.entries(mappings).map(([keycloakRole, strapiRole]) => ({
-        keycloakRole,
-        strapiRole
-      }));
-      await strapi2.entityService.createMany("plugin::strapi-keycloak-passport.role-mapping", {
-        data: entries
-      });
+      for (const [keycloakRole, strapiRole] of Object.entries(mappings)) {
+        await strapi2.entityService.create("plugin::strapi-keycloak-passport.role-mapping", {
+          data: { keycloakRole, strapiRole }
+        });
+      }
       strapi2.log.info("✅ Role mappings saved successfully.");
     } catch (error) {
       strapi2.log.error("❌ Failed to save role mappings:", error);

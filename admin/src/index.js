@@ -5,7 +5,7 @@ import { PluginIcon } from './components/PluginIcon';
 export default {
   register(app) {
     app.addMenuLink({
-      to: `plugins/${PluginIcon}`,
+      to: `plugins/${PLUGIN_ID}`,
       icon: PluginIcon,
       intlLabel: {
         id: `${PLUGIN_ID}.plugin.name`,
@@ -16,6 +16,12 @@ export default {
 
         return App;
       },
+      permissions: [
+        {
+          action: 'plugin::strapi-keycloak-passport.access', // ✅ Restrict access based on Strapi permissions
+          subject: null,
+        },
+      ],
     });
 
     app.registerPlugin({

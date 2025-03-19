@@ -5,7 +5,7 @@
  * @description UI for mapping Keycloak roles to Strapi roles in Strapi Admin panel.
  */
 
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -18,12 +18,13 @@ import {
   Tr,
   Th,
   Td,
-  Select,
-  Option,
+  SingleSelect,
+  SingleSelectOption,
   Loader,
   Alert,
+  useNotifyAT,
 } from '@strapi/design-system';
-import { Check } from '@strapi/icons';
+import { Check, Collapse } from '@strapi/icons';
 
 /**
  * @typedef {Object} HomePageState
@@ -83,6 +84,8 @@ const reducer = (state, action) => {
 const HomePage = () => {
   /** @type {HomePageState, React.Dispatch<{ type: string, payload?: any }>}} */
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [isSaving, setIsSaving] = useState(false);
+  const notifyAT = useNotifyAT();
 
   useEffect(() => {
     /**
@@ -131,13 +134,19 @@ const HomePage = () => {
    * @function saveMappings
    */
   const saveMappings = async () => {
+    setIsSaving(true);
     try {
       await axios.post('/strapi-keycloak-passport/save-keycloak-role-mappings', { mappings: state.roleMappings });
       dispatch({ type: 'SET_SUCCESS' });
 
+      // Notify screen readers
+      // notifyAT('Role mappings saved successfully.');
+
       setTimeout(() => dispatch({ type: 'RESET_SUCCESS' }), 3000);
     } catch (error) {
       dispatch({ type: 'SET_ERROR', error: 'Failed to save mappings. Try again.' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -145,7 +154,9 @@ const HomePage = () => {
 
   return (
     <Box padding={8} background="transparent" shadow="filterShadow" borderRadius="4px">
-      <Typography variant="alpha" as="h1">Passport Role Mapping</Typography>
+      <Typography variant="alpha" as="h1">
+        Passport Role Mapping
+      </Typography>
 
       <Box paddingTop={4} paddingBottom={4}>
         <Typography textColor="neutral600" variant="epsilon">
@@ -155,7 +166,7 @@ const HomePage = () => {
 
       {state.error && (
         <Box paddingBottom={4}>
-          <Alert title="Error" variant="danger" startIcon={<Check />}>
+          <Alert title="Error" variant="danger" startIcon={<Collapse />}>
             {state.error}
           </Alert>
         </Box>
@@ -169,8 +180,8 @@ const HomePage = () => {
         </Box>
       )}
 
-      <Box background="neutral0">
-        <Table>
+      <Box background="transparent">
+        <Table colCount={2} rowCount={state.keycloakRoles.length + 1}>
           <Thead>
             <Tr>
               <Th>Keycloak Role</Th>
@@ -180,19 +191,24 @@ const HomePage = () => {
           <Tbody>
             {state.keycloakRoles.map((kcRole) => (
               <Tr key={kcRole.id}>
-                <Td>{kcRole.name}</Td>
                 <Td>
-                  <Select
-                    placeholder="Select Strapi Role"
+                  <Typography textColor="neutral800">{kcRole.name}</Typography>
+                </Td>
+                <Td>
+                  <SingleSelect
+                    label="Select Strapi Role"
+                    placeholder="Assign role"
+                    value={String(state.roleMappings[kcRole.name] || '')}
                     onChange={(roleId) => handleRoleMappingChange(kcRole.name, roleId)}
-                    value={state.roleMappings[kcRole.name] || ''} // ✅ Ensure valid value
                   >
                     {state.strapiRoles.map((strapiRole) => (
-                      <Option key={strapiRole.id} value={strapiRole.id}>
+                      <SingleSelectOption
+                        key={strapiRole.id}
+                        value={String(strapiRole.id)}>
                         {strapiRole.name}
-                      </Option>
+                      </SingleSelectOption>
                     ))}
-                  </Select>
+                  </SingleSelect>
                 </Td>
               </Tr>
             ))}
@@ -201,7 +217,14 @@ const HomePage = () => {
 
         <Box padding={4} paddingRight={8}>
           <Flex justifyContent="flex-end">
-            <Button onClick={saveMappings} variant="primary">Save Mappings</Button>
+            <Button
+              onClick={saveMappings}
+              variant="default"
+              loading={isSaving}
+              disabled={isSaving}
+            >
+              {isSaving ? 'Saving...' : 'Save Mappings'}
+            </Button>
           </Flex>
         </Box>
       </Box>

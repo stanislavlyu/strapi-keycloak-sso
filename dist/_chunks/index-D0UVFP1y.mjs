@@ -558,7 +558,8 @@ const SvgCollapse = ({
   const stroke = strokeProp && strokeProp in colors ? colors[strokeProp] : strokeProp;
   return /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 32 32", width: 16, height: 16, fill, stroke, ref, ...props, children: /* @__PURE__ */ jsx("path", { d: "M18.5 12V6a1.5 1.5 0 1 1 3 0v4.5H26a1.5 1.5 0 1 1 0 3h-6a1.5 1.5 0 0 1-1.5-1.5M12 18.5H6a1.5 1.5 0 1 0 0 3h4.5V26a1.5 1.5 0 1 0 3 0v-6a1.5 1.5 0 0 0-1.5-1.5m14 0h-6a1.5 1.5 0 0 0-1.5 1.5v6a1.5 1.5 0 1 0 3 0v-4.5H26a1.5 1.5 0 1 0 0-3m-14-14A1.5 1.5 0 0 0 10.5 6v4.5H6a1.5 1.5 0 1 0 0 3h6a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 12 4.5" }) });
 };
-forwardRef(SvgCollapse);
+const ForwardRef$4a = forwardRef(SvgCollapse);
+const ForwardRef$4b = ForwardRef$4a;
 const SvgCommand = ({
   fill: fillProp = "currentColor",
   stroke: strokeProp,
@@ -2300,16 +2301,23 @@ const PluginIcon = () => /* @__PURE__ */ jsx(ForwardRef$1Z, { "aria-label": "Key
 const index = {
   register(app) {
     app.addMenuLink({
-      to: `plugins/${PluginIcon}`,
+      to: `plugins/${PLUGIN_ID}`,
       icon: PluginIcon,
       intlLabel: {
         id: `${PLUGIN_ID}.plugin.name`,
         defaultMessage: PLUGIN_ID
       },
       Component: async () => {
-        const { App } = await import("./App-BeiK6w8K.mjs");
+        const { App } = await import("./App-8lWzVXTu.mjs");
         return App;
-      }
+      },
+      permissions: [
+        {
+          action: "plugin::strapi-keycloak-passport.access",
+          // ✅ Restrict access based on Strapi permissions
+          subject: null
+        }
+      ]
     });
     app.registerPlugin({
       id: PLUGIN_ID,
@@ -2332,6 +2340,7 @@ const index = {
   }
 };
 export {
-  ForwardRef$4F as F,
+  ForwardRef$4b as F,
+  ForwardRef$4F as a,
   index as i
 };

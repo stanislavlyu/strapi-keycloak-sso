@@ -1,7 +1,21 @@
 {
+  "name": "strapi-keycloak-passport",
   "version": "0.1.0",
-  "keywords": [],
+  "description": "Keycloak authentication provider for the Strapi v5 administration panel.",
+  "license": "MIT",
+  "author": "SOC Digital Team <opensource@sonatel.sn>",
+  "keywords": [
+    "strapi",
+    "plugin",
+    "authentication",
+    "keycloak",
+    "passport",
+    "oidc",
+    "admin",
+    "v5"
+  ],
   "type": "commonjs",
+  "main": "dist/server/index.js",
   "exports": {
     "./package.json": "./package.json",
     "./strapi-admin": {
@@ -18,13 +32,18 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "strapi-admin.js",
+    "strapi-server.js"
   ],
   "scripts": {
     "build": "strapi-plugin build",
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
-    "verify": "strapi-plugin verify"
+    "verify": "strapi-plugin verify",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@strapi/design-system": "^2.0.0-rc.18",
@@ -47,14 +66,22 @@
     "react-router-dom": "^6.30.0",
     "styled-components": "^6.1.16"
   },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strapi-plugin-keycloak-passport"
+  },
+  "bugs": {
+    "url": "https://github.com/strapi-plugin-keycloak-passport/issues"
+  },
+  "homepage": "https://github.com/strapi-plugin-keycloak-passport#readme",
   "strapi": {
     "kind": "plugin",
     "name": "strapi-keycloak-passport",
     "displayName": "Keycloak Passport",
     "description": "Keycloak authentication provider for administration panel"
-  },
-  "name": "strapi-keycloak-passport",
-  "description": "Keycloak authentication provider for the Strapi administration panel.",
-  "license": "MIT",
-  "author": "(LPIX-11) <mohamed.johnson@orange-sonatel.com>"
+  }
 }

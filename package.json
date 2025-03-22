@@ -1,6 +1,6 @@
 {
   "name": "strapi-keycloak-passport",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Keycloak authentication provider for the Strapi v5 administration panel.",
   "license": "MIT",
   "author": "SOC Digital Team <opensource@sonatel.sn>",
@@ -72,12 +72,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/strapi-plugin-keycloak-passport"
+    "url": "https://github.com/LPIX-11/strapi-keycloak-passport"
   },
   "bugs": {
-    "url": "https://github.com/strapi-plugin-keycloak-passport/issues"
+    "url": "https://github.com/LPIX-11/strapi-keycloak-passport/issues"
   },
-  "homepage": "https://github.com/strapi-plugin-keycloak-passport#readme",
+  "homepage": "https://github.com/LPIX-11/strapi-keycloak-passport#readme",
   "strapi": {
     "kind": "plugin",
     "name": "strapi-keycloak-passport",

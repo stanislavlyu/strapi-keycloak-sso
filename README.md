@@ -14,11 +14,11 @@
 
 ## 📦 Installation
 ```bash
-yarn add @sonatel/strapi-keycloak-passport
+yarn add strapi-keycloak-passport
 ```
 or
 ```bash
-npm install @sonatel/strapi-keycloak-passport
+npm install strapi-keycloak-passport
 ```
 
 ---

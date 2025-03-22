@@ -43,7 +43,7 @@
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
     "verify": "strapi-plugin verify",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "@strapi/design-system": "^2.0.0-rc.18",

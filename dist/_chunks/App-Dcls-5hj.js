@@ -77,18 +77,18 @@ const HomePage = () => {
     }
   };
   if (state.loading) return /* @__PURE__ */ jsxRuntime.jsx(designSystem.Loader, { children: "Loading roles..." });
-  return /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Box, { padding: 10, background: "transparent", shadow: "filterShadow", borderRadius: "12px", children: [
+  return /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Box, { padding: 10, background: "neutral0", shadow: "filterShadow", borderRadius: "12px", children: [
     /* @__PURE__ */ jsxRuntime.jsx(designSystem.Typography, { variant: "alpha", as: "h1", fontWeight: "bold", children: "Passport Role Mapping" }),
     /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingTop: 2, paddingBottom: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Typography, { variant: "epsilon", textColor: "neutral600", paddingTop: 2, paddingBottom: 4, children: "Map Keycloak roles to Strapi admin roles." }) }),
     state.error && /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingBottom: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Alert, { title: "Error", variant: "danger", startIcon: /* @__PURE__ */ jsxRuntime.jsx(icons.Collapse, {}), children: state.error }) }),
     state.success && /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingBottom: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Alert, { title: "Success", variant: "success", startIcon: /* @__PURE__ */ jsxRuntime.jsx(icons.Check, {}), children: "Role mappings saved successfully!" }) }),
     /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Box, { background: "transparent", children: [
-      /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Table, { background: "transparent", colCount: 2, rowCount: state.keycloakRoles.length + 1, children: [
-        /* @__PURE__ */ jsxRuntime.jsx(designSystem.Thead, { background: "transparent", children: /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Tr, { children: [
+      /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Table, { colCount: 2, rowCount: state.keycloakRoles.length + 1, children: [
+        /* @__PURE__ */ jsxRuntime.jsx(designSystem.Thead, { children: /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Tr, { children: [
           /* @__PURE__ */ jsxRuntime.jsx(designSystem.Th, { children: "Keycloak Role" }),
           /* @__PURE__ */ jsxRuntime.jsx(designSystem.Th, { children: "Strapi Role" })
         ] }) }),
-        /* @__PURE__ */ jsxRuntime.jsx(designSystem.Tbody, { background: "transparent", children: state.keycloakRoles.map((kcRole) => /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Tr, { children: [
+        /* @__PURE__ */ jsxRuntime.jsx(designSystem.Tbody, { children: state.keycloakRoles.map((kcRole) => /* @__PURE__ */ jsxRuntime.jsxs(designSystem.Tr, { children: [
           /* @__PURE__ */ jsxRuntime.jsx(designSystem.Td, { children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Typography, { textColor: "neutral800", children: kcRole.name }) }),
           /* @__PURE__ */ jsxRuntime.jsx(designSystem.Td, { children: /* @__PURE__ */ jsxRuntime.jsx(
             designSystem.SingleSelect,

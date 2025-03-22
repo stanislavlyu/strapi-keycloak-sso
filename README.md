@@ -48,7 +48,6 @@ module.exports = ({ env }) => ({
         ]),
       },
     },
-    resolve: '../strapi-keycloak-passport',
   },
 });
 ```

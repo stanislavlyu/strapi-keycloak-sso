@@ -73,18 +73,18 @@ const HomePage = () => {
     }
   };
   if (state.loading) return /* @__PURE__ */ jsx(Loader, { children: "Loading roles..." });
-  return /* @__PURE__ */ jsxs(Box, { padding: 10, background: "transparent", shadow: "filterShadow", borderRadius: "12px", children: [
+  return /* @__PURE__ */ jsxs(Box, { padding: 10, background: "neutral0", shadow: "filterShadow", borderRadius: "12px", children: [
     /* @__PURE__ */ jsx(Typography, { variant: "alpha", as: "h1", fontWeight: "bold", children: "Passport Role Mapping" }),
     /* @__PURE__ */ jsx(Box, { paddingTop: 2, paddingBottom: 4, children: /* @__PURE__ */ jsx(Typography, { variant: "epsilon", textColor: "neutral600", paddingTop: 2, paddingBottom: 4, children: "Map Keycloak roles to Strapi admin roles." }) }),
     state.error && /* @__PURE__ */ jsx(Box, { paddingBottom: 4, children: /* @__PURE__ */ jsx(Alert, { title: "Error", variant: "danger", startIcon: /* @__PURE__ */ jsx(Collapse, {}), children: state.error }) }),
     state.success && /* @__PURE__ */ jsx(Box, { paddingBottom: 4, children: /* @__PURE__ */ jsx(Alert, { title: "Success", variant: "success", startIcon: /* @__PURE__ */ jsx(Check, {}), children: "Role mappings saved successfully!" }) }),
     /* @__PURE__ */ jsxs(Box, { background: "transparent", children: [
-      /* @__PURE__ */ jsxs(Table, { background: "transparent", colCount: 2, rowCount: state.keycloakRoles.length + 1, children: [
-        /* @__PURE__ */ jsx(Thead, { background: "transparent", children: /* @__PURE__ */ jsxs(Tr, { children: [
+      /* @__PURE__ */ jsxs(Table, { colCount: 2, rowCount: state.keycloakRoles.length + 1, children: [
+        /* @__PURE__ */ jsx(Thead, { children: /* @__PURE__ */ jsxs(Tr, { children: [
           /* @__PURE__ */ jsx(Th, { children: "Keycloak Role" }),
           /* @__PURE__ */ jsx(Th, { children: "Strapi Role" })
         ] }) }),
-        /* @__PURE__ */ jsx(Tbody, { background: "transparent", children: state.keycloakRoles.map((kcRole) => /* @__PURE__ */ jsxs(Tr, { children: [
+        /* @__PURE__ */ jsx(Tbody, { children: state.keycloakRoles.map((kcRole) => /* @__PURE__ */ jsxs(Tr, { children: [
           /* @__PURE__ */ jsx(Td, { children: /* @__PURE__ */ jsx(Typography, { textColor: "neutral800", children: kcRole.name }) }),
           /* @__PURE__ */ jsx(Td, { children: /* @__PURE__ */ jsx(
             SingleSelect,

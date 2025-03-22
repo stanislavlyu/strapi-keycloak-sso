@@ -4,7 +4,7 @@ import { useNotifyAT, Loader, Box, Typography, Alert, Table, Thead, Tr, Th, Tbod
 import { Routes, Route } from "react-router-dom";
 import { useReducer, useState, useEffect } from "react";
 import axios from "axios";
-import { F as ForwardRef$4b, a as ForwardRef$4F } from "./index-D0UVFP1y.mjs";
+import { Collapse, Check } from "@strapi/icons";
 const initialState = {
   keycloakRoles: [],
   strapiRoles: [],
@@ -73,18 +73,18 @@ const HomePage = () => {
     }
   };
   if (state.loading) return /* @__PURE__ */ jsx(Loader, { children: "Loading roles..." });
-  return /* @__PURE__ */ jsxs(Box, { padding: 8, background: "transparent", shadow: "filterShadow", borderRadius: "4px", children: [
-    /* @__PURE__ */ jsx(Typography, { variant: "alpha", as: "h1", children: "Passport Role Mapping" }),
-    /* @__PURE__ */ jsx(Box, { paddingTop: 4, paddingBottom: 4, children: /* @__PURE__ */ jsx(Typography, { textColor: "neutral600", variant: "epsilon", children: "Map Keycloak roles to Strapi admin roles." }) }),
-    state.error && /* @__PURE__ */ jsx(Box, { paddingBottom: 4, children: /* @__PURE__ */ jsx(Alert, { title: "Error", variant: "danger", startIcon: /* @__PURE__ */ jsx(ForwardRef$4b, {}), children: state.error }) }),
-    state.success && /* @__PURE__ */ jsx(Box, { paddingBottom: 4, children: /* @__PURE__ */ jsx(Alert, { title: "Success", variant: "success", startIcon: /* @__PURE__ */ jsx(ForwardRef$4F, {}), children: "Role mappings saved successfully!" }) }),
+  return /* @__PURE__ */ jsxs(Box, { padding: 10, background: "transparent", shadow: "filterShadow", borderRadius: "12px", children: [
+    /* @__PURE__ */ jsx(Typography, { variant: "alpha", as: "h1", fontWeight: "bold", children: "Passport Role Mapping" }),
+    /* @__PURE__ */ jsx(Box, { paddingTop: 2, paddingBottom: 4, children: /* @__PURE__ */ jsx(Typography, { variant: "epsilon", textColor: "neutral600", paddingTop: 2, paddingBottom: 4, children: "Map Keycloak roles to Strapi admin roles." }) }),
+    state.error && /* @__PURE__ */ jsx(Box, { paddingBottom: 4, children: /* @__PURE__ */ jsx(Alert, { title: "Error", variant: "danger", startIcon: /* @__PURE__ */ jsx(Collapse, {}), children: state.error }) }),
+    state.success && /* @__PURE__ */ jsx(Box, { paddingBottom: 4, children: /* @__PURE__ */ jsx(Alert, { title: "Success", variant: "success", startIcon: /* @__PURE__ */ jsx(Check, {}), children: "Role mappings saved successfully!" }) }),
     /* @__PURE__ */ jsxs(Box, { background: "transparent", children: [
-      /* @__PURE__ */ jsxs(Table, { background: "pink", colCount: 2, rowCount: state.keycloakRoles.length + 1, children: [
-        /* @__PURE__ */ jsx(Thead, { children: /* @__PURE__ */ jsxs(Tr, { children: [
+      /* @__PURE__ */ jsxs(Table, { background: "transparent", colCount: 2, rowCount: state.keycloakRoles.length + 1, children: [
+        /* @__PURE__ */ jsx(Thead, { background: "transparent", children: /* @__PURE__ */ jsxs(Tr, { children: [
           /* @__PURE__ */ jsx(Th, { children: "Keycloak Role" }),
           /* @__PURE__ */ jsx(Th, { children: "Strapi Role" })
         ] }) }),
-        /* @__PURE__ */ jsx(Tbody, { children: state.keycloakRoles.map((kcRole) => /* @__PURE__ */ jsxs(Tr, { children: [
+        /* @__PURE__ */ jsx(Tbody, { background: "transparent", children: state.keycloakRoles.map((kcRole) => /* @__PURE__ */ jsxs(Tr, { children: [
           /* @__PURE__ */ jsx(Td, { children: /* @__PURE__ */ jsx(Typography, { textColor: "neutral800", children: kcRole.name }) }),
           /* @__PURE__ */ jsx(Td, { children: /* @__PURE__ */ jsx(
             SingleSelect,

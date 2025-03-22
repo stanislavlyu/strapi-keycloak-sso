@@ -153,13 +153,13 @@ const HomePage = () => {
   if (state.loading) return <Loader>Loading roles...</Loader>;
 
   return (
-    <Box padding={8} background="transparent" shadow="filterShadow" borderRadius="4px">
-      <Typography variant="alpha" as="h1">
+    <Box padding={10} background="neutral0" shadow="filterShadow" borderRadius="12px">
+      <Typography variant="alpha" as="h1" fontWeight="bold">
         Passport Role Mapping
       </Typography>
 
-      <Box paddingTop={4} paddingBottom={4}>
-        <Typography textColor="neutral600" variant="epsilon">
+      <Box paddingTop={2} paddingBottom={4}>
+        <Typography variant="epsilon" textColor="neutral600" paddingTop={2} paddingBottom={4}>
           Map Keycloak roles to Strapi admin roles.
         </Typography>
       </Box>

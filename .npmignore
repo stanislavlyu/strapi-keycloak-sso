@@ -1,0 +1,7 @@
+admin
+server
+node_modules
+.editorconfig
+.eslintignore
+.strapi-updater.json
+yarn.lock

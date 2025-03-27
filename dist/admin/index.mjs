@@ -17,7 +17,7 @@ const __variableDynamicImportRuntimeHelper = (glob, path, segs) => {
     );
   });
 };
-const PLUGIN_ID = "@sonatel/strapi-keycloak-passport";
+const PLUGIN_ID = "strapi-keycloak-passport";
 const Initializer = ({ setPlugin }) => {
   const ref = useRef(setPlugin);
   useEffect(() => {

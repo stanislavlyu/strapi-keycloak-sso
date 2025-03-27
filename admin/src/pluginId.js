@@ -1,1 +1,1 @@
-export const PLUGIN_ID = '@sonatel/strapi-keycloak-passport';
+export const PLUGIN_ID = 'strapi-keycloak-passport';

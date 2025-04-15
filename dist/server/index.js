@@ -45,7 +45,10 @@ const authOverrideController = {
       const userInfo = userInfoResponse.data;
       const adminUser = await strapi.service("plugin::strapi-keycloak-passport.adminUserService").findOrCreate(userInfo);
       const jwt = await strapi.admin.services.token.createJwtToken(adminUser);
-      ctx.session.user = adminUser;
+      ctx.session = {
+        ...ctx.session,
+        user: adminUser
+      };
       return ctx.send({
         data: {
           token: jwt,
@@ -55,11 +58,8 @@ const authOverrideController = {
             lastname: adminUser.lastname,
             username: adminUser.username || null,
             email: adminUser.email,
-            connectedToken: jwt,
-            attemptResetToken: "0",
             isActive: adminUser.isActive,
             blocked: adminUser.blocked || false,
-            preferedLanguage: null,
             createdAt: adminUser.createdAt,
             updatedAt: adminUser.updatedAt
           }
@@ -445,6 +445,7 @@ const adminUserService = ({ strapi: strapi2 }) => ({
       }
       return adminUser;
     } catch (error) {
+      console.log(error);
       strapi2.log.error("❌ Failed to create/update user:", error.message);
       throw new Error("Failed to create/update user.");
     }

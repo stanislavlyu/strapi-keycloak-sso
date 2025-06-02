@@ -1,6 +1,6 @@
 {
   "name": "strapi-keycloak-sso",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Keycloak authentication provider for the Strapi v5 administration panel.",
   "license": "MIT",
   "author": "Stanislav Lyu <stas-lyu@outlook.com>",
@@ -70,18 +70,10 @@
     "node": ">=20.0.0",
     "npm": ">=9.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LPIX-11/strapi-keycloak-passport"
-  },
-  "bugs": {
-    "url": "https://github.com/LPIX-11/strapi-keycloak-passport/issues"
-  },
-  "homepage": "https://github.com/LPIX-11/strapi-keycloak-passport#readme",
   "strapi": {
     "kind": "plugin",
-    "name": "strapi-keycloak-passport",
-    "displayName": "Keycloak Passport",
+    "name": "strapi-keycloak-sso",
+    "displayName": "Strapi Keycloak SSO",
     "description": "Keycloak authentication provider for administration panel"
   }
 }

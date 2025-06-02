@@ -42,13 +42,13 @@ const adminUserService = ({ strapi }) => ({
 
       /** @type {Object<string, number>} */
       const roleMappings = await strapi
-        .service('plugin::strapi-keycloak-passport.roleMappingService')
+        .service('plugin::strapi-keycloak-sso.roleMappingService')
         .getMappings();
 
       /** @type {number} */
       const DEFAULT_ROLE_ID = strapi
         .config
-        .get('plugin::strapi-keycloak-passport')
+        .get('plugin::strapi-keycloak-sso')
         .roleConfigs
         .defaultRoleId;
 
@@ -117,12 +117,12 @@ const adminUserService = ({ strapi }) => ({
 async function fetchKeycloakUserRoles(keycloakUserId, strapi) {
   if (!keycloakUserId) throw new Error('❌ Keycloak user ID is missing!');
 
-  const config = strapi.config.get('plugin::strapi-keycloak-passport');
+  const config = strapi.config.get('plugin::strapi-keycloak-sso');
 
   try {
     // 🔑 Fetch Keycloak Admin Token from service
     const accessToken = await strapi
-      .plugin('strapi-keycloak-passport')
+      .plugin('strapi-keycloak-sso')
       .service('keycloakService')
       .fetchAdminToken();
 

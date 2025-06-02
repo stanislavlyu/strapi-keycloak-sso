@@ -18,11 +18,11 @@ export default {
    */
   async getRoles(ctx) {
     try {
-      const config = strapi.config.get('plugin::strapi-keycloak-passport');
+      const config = strapi.config.get('plugin::strapi-keycloak-sso');
 
       // 🔑 Get Admin Token
       const accessToken = await strapi
-        .plugin('strapi-keycloak-passport')
+        .plugin('strapi-keycloak-sso')
         .service('keycloakService')
         .fetchAdminToken();
 
@@ -62,7 +62,7 @@ export default {
   async getRoleMappings(ctx) {
     try {
       const mappings = await strapi
-        .service('plugin::strapi-keycloak-passport.roleMappingService')
+        .service('plugin::strapi-keycloak-sso.roleMappingService')
         .getMappings();
 
       // Convert array of mappings into an object
@@ -96,7 +96,7 @@ export default {
       /** @type {Object<string, number>} */
       const { mappings } = ctx.request.body;
 
-      await strapi.plugin('strapi-keycloak-passport')
+      await strapi.plugin('strapi-keycloak-sso')
         .service('roleMappingService')
         .saveMappings(mappings);
 

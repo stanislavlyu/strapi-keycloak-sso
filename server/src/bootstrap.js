@@ -20,19 +20,19 @@ const bootstrap = async ({ strapi }) => {
         section: 'plugins',
         displayName: 'Access Keycloak Plugin',
         uid: 'access',
-        pluginName: 'strapi-keycloak-passport',
+        pluginName: 'strapi-keycloak-sso',
       },
       {
         section: 'plugins',
         displayName: 'View Role Mappings',
         uid: 'view-role-mappings',
-        pluginName: 'strapi-keycloak-passport',
+        pluginName: 'strapi-keycloak-sso',
       },
       {
         section: 'plugins',
         displayName: 'Manage Role Mappings',
         uid: 'manage-role-mappings',
-        pluginName: 'strapi-keycloak-passport',
+        pluginName: 'strapi-keycloak-sso',
       },
     ];
 
@@ -83,7 +83,7 @@ function overrideAdminRoutes(strapi) {
     });
 
     strapi.log.info(`
-      
+
     ╔════════════════════════════════╗
     ║      🛡️ PASSPORT APPLIED 🛡️      ║
     ╚════════════════════════════════╝
@@ -123,12 +123,12 @@ async function ensureDefaultRoleMapping(strapi) {
 
     /** @type {Object} */
     const existingMapping = await strapi.db
-      .query('plugin::strapi-keycloak-passport.role-mapping')
+      .query('plugin::strapi-keycloak-sso.role-mapping')
       .findOne({ where: { keycloakRole: DEFAULT_MAPPING.keycloakRole } });
 
     if (!existingMapping) {
       await strapi.db
-        .query('plugin::strapi-keycloak-passport.role-mapping')
+        .query('plugin::strapi-keycloak-sso.role-mapping')
         .create({ data: DEFAULT_MAPPING });
 
       strapi.log.info(`✅ Default Role Mapping Created: ${DEFAULT_MAPPING.keycloakRole} -> ${DEFAULT_MAPPING.strapiRole} (mapped to Super Admin Role)`);

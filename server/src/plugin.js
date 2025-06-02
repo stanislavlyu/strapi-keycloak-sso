@@ -18,26 +18,26 @@ module.exports = ({ strapi }) => ({
         section: 'plugins',
         displayName: 'Access Keycloak Plugin',
         uid: 'access',
-        pluginName: 'strapi-keycloak-passport',
+        pluginName: 'strapi-keycloak-sso',
       },
       {
         section: 'plugins',
         displayName: 'View Role Mappings',
         uid: 'view-role-mappings',
-        pluginName: 'strapi-keycloak-passport',
+        pluginName: 'strapi-keycloak-sso',
       },
       {
         section: 'plugins',
         displayName: 'Manage Role Mappings',
         uid: 'manage-role-mappings',
-        pluginName: 'strapi-keycloak-passport',
+        pluginName: 'strapi-keycloak-sso',
       },
     ];
 
     try {
       // 🔄 Strapi v5: Registering Permissions
       await strapi.admin.roles.updatePermissions({
-        uid: 'plugin::strapi-keycloak-passport.access',
+        uid: 'plugin::strapi-keycloak-sso.access',
         actions: actions.map(action => action.uid),
       });
 

@@ -32,7 +32,7 @@ export default {
       }
 
       /** @type {Object} */
-      const config = strapi.config.get('plugin::strapi-keycloak-passport');
+      const config = strapi.config.get('plugin::strapi-keycloak-sso');
       strapi.log.info(`🔵 Authenticating ${email} via Keycloak Passport...`);
 
       // 🔑 Authenticate with Keycloak
@@ -65,7 +65,7 @@ export default {
       // 🔄 Find or create Strapi admin user
       /** @type {Object} */
       const adminUser = await strapi
-        .service('plugin::strapi-keycloak-passport.adminUserService')
+        .service('plugin::strapi-keycloak-sso.adminUserService')
         .findOrCreate(userInfo);
 
       // 🔥 Generate Strapi JWT

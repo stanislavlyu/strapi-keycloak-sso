@@ -1,6 +1,6 @@
 {
   "kind": "collectionType",
-  "uid": "plugin::strapi-keycloak-passport.role-mapping",
+  "uid": "plugin::strapi-keycloak-sso.role-mapping",
   "info": {
     "singularName": "role-mapping",
     "pluralName": "role-mappings",

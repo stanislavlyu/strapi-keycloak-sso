@@ -14,11 +14,11 @@
 
 ## 📦 Installation
 ```bash
-yarn add strapi-keycloak-passport
+yarn add strapi-keycloak-sso
 ```
 or
 ```bash
-npm install strapi-keycloak-passport
+npm install strapi-keycloak-sso
 ```
 
 ---
@@ -29,7 +29,7 @@ Add the following entry inside your `config/plugins.js` file:
 
 ```javascript
 module.exports = ({ env }) => ({
-  'strapi-keycloak-passport': {
+  'strapi-keycloak-sso': {
     enabled: env('KEYCLOAK_PASSPORT_ACTIVE', true),
     config: {
       KEYCLOAK_AUTH_URL: env('KEYCLOAK_PASSPORT_AUTH_URL', 'https://keycloak.example.com/auth'),

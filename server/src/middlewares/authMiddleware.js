@@ -10,7 +10,7 @@
 const authMiddleware = async (ctx, next) => {
   /** @type {Object} */
   const { KEYCLOAK_AUTH_URL, KEYCLOAK_CLIENT_ID, KEYCLOAK_REDIRECT_URI } =
-    strapi.config.get('plugin::strapi-keycloak-passport');
+    strapi.config.get('plugin::strapi-keycloak-sso');
 
   /** @type {string} */
   const keycloakLoginUrl = `${KEYCLOAK_AUTH_URL}?client_id=${KEYCLOAK_CLIENT_ID}&redirect_uri=${KEYCLOAK_REDIRECT_URI}&response_type=code`;

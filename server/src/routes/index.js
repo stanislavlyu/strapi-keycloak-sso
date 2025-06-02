@@ -24,7 +24,7 @@ const routes = [
     config: {
       auth: false,
       policies: [],
-      middlewares: [checkAdminPermission('plugin::strapi-keycloak-passport.access')],
+      middlewares: [checkAdminPermission('plugin::strapi-keycloak-sso.access')],
     },
   },
 
@@ -36,7 +36,7 @@ const routes = [
     config: {
       auth: false, // ✅ Required for admin data access
       policies: [],
-      middlewares: [checkAdminPermission('plugin::strapi-keycloak-passport.view-role-mappings')],
+      middlewares: [checkAdminPermission('plugin::strapi-keycloak-sso.view-role-mappings')],
     },
   },
 
@@ -48,7 +48,7 @@ const routes = [
     config: {
       auth: false, // ✅ Ensures only admins can perform this action
       policies: [],
-      middlewares: [checkAdminPermission('plugin::strapi-keycloak-passport.manage-role-mappings')],
+      middlewares: [checkAdminPermission('plugin::strapi-keycloak-sso.manage-role-mappings')],
     },
   },
 ];

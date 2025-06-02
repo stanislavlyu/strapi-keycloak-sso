@@ -21,7 +21,7 @@ const roleMappingService = ({ strapi }) => ({
   async saveMappings(mappings) {
     try {
       // ✅ Delete all existing mappings (Strapi v5 requires explicit filters)
-      await strapi.db.query('plugin::strapi-keycloak-passport.role-mapping').deleteMany({
+      await strapi.db.query('plugin::strapi-keycloak-sso.role-mapping').deleteMany({
         where: {
           id: {
             $notNull: true,
@@ -31,7 +31,7 @@ const roleMappingService = ({ strapi }) => ({
 
       // ✅ Bulk insert new role mappings
       for (const [keycloakRole, strapiRole] of Object.entries(mappings)) {
-        await strapi.entityService.create('plugin::strapi-keycloak-passport.role-mapping', {
+        await strapi.entityService.create('plugin::strapi-keycloak-sso.role-mapping', {
           data: { keycloakRole, strapiRole },
         });
       }
@@ -52,7 +52,7 @@ const roleMappingService = ({ strapi }) => ({
    */
   async getMappings() {
     try {
-      const roleMappings = await strapi.entityService.findMany('plugin::strapi-keycloak-passport.role-mapping', {});
+      const roleMappings = await strapi.entityService.findMany('plugin::strapi-keycloak-sso.role-mapping', {});
       return roleMappings;
     } catch (error) {
       strapi.log.error('❌ Failed to retrieve role mappings:', error);

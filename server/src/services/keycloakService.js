@@ -16,7 +16,7 @@ const keycloakService = ({ strapi }) => ({
    * @throws {Error} If authentication fails.
    */
   async fetchAdminToken() {
-    const config = strapi.config.get('plugin::strapi-keycloak-passport');
+    const config = strapi.config.get('plugin::strapi-keycloak-sso');
 
     try {
       // 🔥 Send request to Keycloak for an admin token

@@ -18,7 +18,7 @@ export default {
       },
       permissions: [
         {
-          action: 'plugin::strapi-keycloak-passport.access', // ✅ Restrict access based on Strapi permissions
+          action: 'plugin::strapi-keycloak-sso.access', // ✅ Restrict access based on Strapi permissions
           subject: null,
         },
       ],

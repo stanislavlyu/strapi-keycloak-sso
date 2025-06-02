@@ -17,7 +17,7 @@ const __variableDynamicImportRuntimeHelper = (glob, path, segs) => {
     );
   });
 };
-const PLUGIN_ID = "strapi-keycloak-passport";
+const PLUGIN_ID = "strapi-keycloak-sso";
 const Initializer = ({ setPlugin }) => {
   const ref = useRef(setPlugin);
   useEffect(() => {
@@ -36,12 +36,12 @@ const index = {
         defaultMessage: PLUGIN_ID
       },
       Component: async () => {
-        const { App } = await import("../_chunks/App-CmBonNfA.mjs");
+        const { App } = await import("../_chunks/App-Co2OgrjF.mjs");
         return App;
       },
       permissions: [
         {
-          action: "plugin::strapi-keycloak-passport.access",
+          action: "plugin::strapi-keycloak-sso.access",
           // ✅ Restrict access based on Strapi permissions
           subject: null
         }

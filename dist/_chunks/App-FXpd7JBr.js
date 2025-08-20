@@ -44,8 +44,8 @@ const HomePage = () => {
     async function fetchRoles() {
       try {
         const [rolesResponse, mappingsResponse] = await Promise.all([
-          axios__default.default.get("/strapi-keycloak-passport/keycloak-roles"),
-          axios__default.default.get("/strapi-keycloak-passport/get-keycloak-role-mappings")
+          axios__default.default.get("/strapi-keycloak-sso/keycloak-roles"),
+          axios__default.default.get("/strapi-keycloak-sso/get-keycloak-role-mappings")
         ]);
         dispatch({
           type: "SET_DATA",
@@ -67,7 +67,7 @@ const HomePage = () => {
   const saveMappings = async () => {
     setIsSaving(true);
     try {
-      await axios__default.default.post("/strapi-keycloak-passport/save-keycloak-role-mappings", { mappings: state.roleMappings });
+      await axios__default.default.post("/strapi-keycloak-sso/save-keycloak-role-mappings", { mappings: state.roleMappings });
       dispatch({ type: "SET_SUCCESS" });
       setTimeout(() => dispatch({ type: "RESET_SUCCESS" }), 3e3);
     } catch (error) {

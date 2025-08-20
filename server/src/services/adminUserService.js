@@ -128,11 +128,11 @@ async function fetchKeycloakUserRoles(keycloakUserId, strapi) {
 
     // 🔍 Fetch User Roles
     const rolesResponse = await axios.get(
-      `${config.KEYCLOAK_AUTH_URL}/auth/admin/realms/${config.KEYCLOAK_REALM}/users/${keycloakUserId}/role-mappings/realm`,
+      `${config.KEYCLOAK_AUTH_URL}/auth/admin/realms/${config.KEYCLOAK_REALM}/users/${keycloakUserId}/role-mappings`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
 
-    return rolesResponse.data.map(role => role.name);
+    return rolesResponse?.data?.clientMappings['strapi-admin']?.mappings?.map((role) => role.name);
   } catch (error) {
     strapi.log.error('❌ Failed to fetch Keycloak user roles:', error.response?.data || error.message);
     throw new Error('Failed to fetch Keycloak user roles.');
